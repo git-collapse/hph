@@ -4,32 +4,47 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
-import { Lesson, Module } from "@/data/courses";
+import { Course, Lesson, Module } from "@/data/courses";
 import { CONTENT_MAP } from "@/data/contentMap";
-import { ArrowRight, Trophy } from "lucide-react";
+import { ArrowRight, ArrowLeft, Trophy, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { TheoryRenderer } from "@/components/lessons/TheoryRenderer";
 import { QuizEngine } from "@/components/lessons/QuizEngine";
 
 export function LessonClient({ 
+  course,
   module, 
   lesson, 
-  nextLessonUrl 
+  nextLessonUrl,
+  prevLessonUrl
 }: { 
+  course: Course,
   module: Module, 
   lesson: Lesson, 
-  nextLessonUrl: string | null 
+  nextLessonUrl: string | null,
+  prevLessonUrl: string | null
 }) {
-  const { addXp, markModuleComplete } = useUser();
+  const { currentUser, markLessonComplete, isLessonCompleted } = useUser();
   const router = useRouter();
-  const [completed, setCompleted] = useState(false);
-  const [quizPassed, setQuizPassed] = useState(false);
+  
+  const alreadyCompleted = isLessonCompleted(course.id, lesson.id);
+  const [completed, setCompleted] = useState(alreadyCompleted);
+  const [quizPassed, setQuizPassed] = useState(alreadyCompleted);
 
   // Pull detailed content from CONTENT_MAP
   const lessonData = CONTENT_MAP[lesson.id];
 
+  const totalLessonsInCourse = course.modules.reduce((acc, m) => acc + m.lessons.length, 0);
+
   const handleComplete = () => {
-    if (completed) return;
+    if (completed) {
+      if (nextLessonUrl) {
+        router.push(nextLessonUrl);
+      } else {
+        router.push(`/course/${course.id}`);
+      }
+      return;
+    }
 
     // For quizzes, block completion unless passed
     if (lesson.type === "quiz" && !quizPassed) {
@@ -38,18 +53,15 @@ export function LessonClient({
     }
 
     setCompleted(true);
-    addXp(lesson.xp);
     
-    // Check if this is the last lesson in the module
-    const isLast = module.lessons[module.lessons.length - 1].id === lesson.id;
-    if (isLast) {
-      markModuleComplete(module.id);
+    if (currentUser) {
+      markLessonComplete(course.id, lesson.id, lesson.xp, totalLessonsInCourse);
     }
 
     if (nextLessonUrl) {
       router.push(nextLessonUrl);
     } else {
-      router.push('/courses');
+      router.push(`/course/${course.id}`);
     }
   };
 
@@ -61,10 +73,13 @@ export function LessonClient({
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <Link href="/courses" className="text-zinc-400 hover:text-white transition-colors text-sm mb-2 inline-block">
-            ← Back to Syllabus
+          <Link href={`/course/${course.id}`} className="text-zinc-400 hover:text-white transition-colors text-sm mb-2 inline-block">
+            ← Back to {course.title}
           </Link>
-          <h1 className="text-3xl font-extrabold">{lesson.title}</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-extrabold">{lesson.title}</h1>
+            {alreadyCompleted && <CheckCircle className="text-green-500 w-6 h-6" />}
+          </div>
           <p className="text-zinc-400 mt-1">{module.title}</p>
         </div>
         <div className="flex items-center gap-2 bg-yellow-500/10 text-yellow-500 px-4 py-2 rounded-xl font-bold border border-yellow-500/20">
@@ -98,7 +113,7 @@ export function LessonClient({
             <div className="w-full max-w-md aspect-video bg-black/50 border border-white/10 rounded-xl flex items-center justify-center shadow-2xl">
               <span className="text-4xl animate-pulse">⚙️</span>
             </div>
-            <p className="mt-8 text-zinc-500 text-sm">Visualizers are being upgraded in Phase 3.</p>
+            <p className="mt-8 text-zinc-500 text-sm">Visualizers are preserved from JSVerse Ultimate.</p>
           </div>
         )}
 
@@ -117,18 +132,25 @@ export function LessonClient({
         )}
       </motion.div>
 
-      {/* Hide complete button for quizzes until they pass. QuizEngine handles passing state internally and we block clicking complete. */}
-      {lesson.type !== "quiz" || quizPassed ? (
-        <div className="flex justify-end">
+      <div className="flex justify-between items-center pt-8 border-t border-white/10">
+        {prevLessonUrl ? (
+          <Link href={prevLessonUrl}>
+            <button className="flex items-center px-6 py-3 bg-white/5 text-zinc-300 font-bold rounded-lg hover:bg-white/10 transition-colors border border-white/10">
+              <ArrowLeft className="mr-2 w-5 h-5" /> Previous
+            </button>
+          </Link>
+        ) : <div />}
+
+        {lesson.type !== "quiz" || quizPassed || alreadyCompleted ? (
           <button 
             onClick={handleComplete}
-            className="flex items-center px-8 py-4 bg-primary text-black font-bold rounded-lg hover:bg-yellow-400 transition-colors shadow-[0_0_20px_4px_rgba(247,223,30,0.2)]"
+            className={`flex items-center px-8 py-4 font-bold rounded-lg transition-colors ${alreadyCompleted ? 'bg-white/10 text-white border border-white/20' : 'bg-primary text-black hover:bg-yellow-400 shadow-[0_0_20px_4px_rgba(247,223,30,0.2)]'}`}
           >
-            {completed ? "Completed!" : "Complete & Continue"}
+            {alreadyCompleted ? (nextLessonUrl ? "Next Lesson" : "Finish Course") : "Complete & Continue"}
             <ArrowRight className="ml-2 w-5 h-5" />
           </button>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
     </div>
   );
 }

@@ -16,7 +16,8 @@ const CHALLENGES = [
 ];
 
 export default function ChallengesPage() {
-  const { level } = useUser();
+  const { currentUser } = useUser();
+  const level = currentUser?.level || 1;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

@@ -1,7 +1,7 @@
 export type Lesson = {
   id: string;
   title: string;
-  type: "theory" | "interactive" | "quiz" | "playground";
+  type: "theory" | "interactive" | "quiz" | "playground" | "video";
   xp: number;
 };
 
@@ -12,7 +12,20 @@ export type Module = {
   lessons: Lesson[];
 };
 
-export const COURSE_MODULES: Module[] = [
+export type Course = {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  instructor: string;
+  duration: string;
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  category: "Frontend" | "Backend" | "Fullstack" | "DevOps" | "Data Science";
+  outcomes: string[];
+  modules: Module[];
+};
+
+const jsModules: Module[] = [
   {
     id: "module-1",
     title: "Introduction to JavaScript",
@@ -81,3 +94,57 @@ export const COURSE_MODULES: Module[] = [
     ],
   }
 ];
+
+export const PLATFORM_COURSES: Course[] = [
+  {
+    id: "jsverse",
+    title: "JSVerse Ultimate: The Deep Dive",
+    description: "Master JavaScript under the hood. Learn the V8 engine, Call Stack, Memory Heap, and build real-world projects.",
+    thumbnail: "https://images.unsplash.com/photo-1627398240309-08a1560c5d1b?auto=format&fit=crop&q=80&w=800",
+    instructor: "Alex Thunder",
+    duration: "25 Hours",
+    difficulty: "Advanced",
+    category: "Frontend",
+    outcomes: ["Understand the V8 Engine", "Master Closures and Scope", "Understand Stack vs Heap Memory", "Build 13 Mini-Projects"],
+    modules: jsModules
+  },
+  {
+    id: "react-mastery",
+    title: "React Modern Mastery",
+    description: "Learn React from scratch. Hooks, Context, Redux, and Next.js integration.",
+    thumbnail: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=800",
+    instructor: "Sarah Code",
+    duration: "30 Hours",
+    difficulty: "Intermediate",
+    category: "Frontend",
+    outcomes: ["Master React Hooks", "State Management with Redux", "Server-Side Rendering", "Build an E-Commerce App"],
+    modules: [] // Mock empty for now
+  },
+  {
+    id: "python-basics",
+    title: "Python for Data Science",
+    description: "Start your data journey. Learn Python, Pandas, NumPy, and Data Visualization.",
+    thumbnail: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800",
+    instructor: "Dr. Data",
+    duration: "40 Hours",
+    difficulty: "Beginner",
+    category: "Data Science",
+    outcomes: ["Python Fundamentals", "Data Cleaning with Pandas", "Matplotlib Visualizations", "Machine Learning Intro"],
+    modules: []
+  },
+  {
+    id: "node-backend",
+    title: "Node.js & Express Architecture",
+    description: "Build robust, scalable backend systems with Node, Express, and MongoDB.",
+    thumbnail: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=800",
+    instructor: "Backend Ben",
+    duration: "20 Hours",
+    difficulty: "Intermediate",
+    category: "Backend",
+    outcomes: ["REST API Design", "Authentication & JWT", "MongoDB & Mongoose", "Deployment on AWS"],
+    modules: []
+  }
+];
+
+// Fallback for old code that imports COURSE_MODULES
+export const COURSE_MODULES = jsModules;
