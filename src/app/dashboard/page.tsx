@@ -49,7 +49,7 @@ export default function DashboardPage() {
             <BookOpen className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
             <h3 className="text-xl font-bold mb-2">No courses yet</h3>
             <p className="text-zinc-400 mb-6">Enroll in a course to start your learning journey.</p>
-            <Link href="/explore">
+            <Link href="/">
               <button className="px-6 py-3 bg-primary text-black font-bold rounded-xl hover:bg-yellow-400 transition-colors">
                 Explore Courses
               </button>

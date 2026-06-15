@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Search, Compass, BookOpen, UserCircle, LogOut, Settings, Award, Users, Trophy, Sun, Moon } from "lucide-react";
+import { Search, Compass, BookOpen, UserCircle, LogOut, Settings, Award, Users, Trophy, Sun, Moon, Code2, Zap, LayoutDashboard, Map, PlaySquare } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { useTheme } from "next-themes";
 
@@ -20,13 +20,19 @@ export function Navbar() {
 
   const GLOBAL_LINKS = [
     { name: "Explore", href: "/", icon: Compass },
+    { name: "Visualizer", href: "/visualizer", icon: PlaySquare },
+    { name: "Playground", href: "/playground", icon: Code2 },
+    { name: "Projects", href: "/projects", icon: LayoutDashboard },
+    { name: "Challenges", href: "/challenges", icon: Zap },
     { name: "Leaderboard", href: "/leaderboard", icon: Trophy },
     { name: "Community", href: "/community", icon: Users },
   ];
 
   const LOGGED_IN_LINKS = [
     { name: "My Dashboard", href: "/dashboard", icon: BookOpen },
+    { name: "Roadmap", href: "/roadmap", icon: Map },
     { name: "Achievements", href: "/achievements", icon: Award },
+    { name: "Certificate", href: "/certificate", icon: Award },
   ];
 
   const adminLinks = currentUser?.role === "admin" 
