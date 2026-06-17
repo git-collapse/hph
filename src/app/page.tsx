@@ -1,203 +1,226 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import { useCourses } from "@/context/CourseContext";
-import { Search, Sparkles, BookOpen, Clock, BarChart, Users } from "lucide-react";
-import { useState } from "react";
+import { Sparkles, BookOpen, Clock, BarChart, Users, ChevronRight, Code2, Database, LayoutTemplate, Network } from "lucide-react";
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+import { useRef } from "react";
 
 export default function HomePage() {
   const { coursesDb } = useCourses();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
-
-  const categories = ["All", ...Array.from(new Set(coursesDb.map(c => c.category)))];
-
-  const filteredCourses = coursesDb.filter(c => {
-    const matchesSearch = c.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          c.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || c.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
   });
 
+  const pathLength = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
+  const categoryIcons: Record<string, any> = {
+    "Frontend": LayoutTemplate,
+    "Backend": Network,
+    "Fullstack": Code2,
+    "Data Science": Database,
+  };
+
+  const categoryGradients: Record<string, string> = {
+    "Frontend": "from-primary to-orange-500",
+    "Backend": "from-green-400 to-emerald-600",
+    "Fullstack": "from-blue-400 to-indigo-600",
+    "Data Science": "from-purple-400 to-pink-600",
+  };
+
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
-        
-        {/* Glow Effects */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-full max-w-4xl aspect-square bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute top-1/2 right-0 w-96 h-96 bg-purple-500/20 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-[100px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center max-w-4xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-white/10 mb-8"
-            >
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-bold bg-gradient-to-r from-primary to-green-500 bg-clip-text text-transparent">
-                The New Standard in Tech Education
-              </span>
-            </motion.div>
-
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-tight"
-            >
-              Master In-Demand Skills <br className="hidden md:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-yellow-300 to-green-400">
-                Faster Than Ever
-              </span>
-            </motion.h1>
-
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-xl text-zinc-400 mb-10 max-w-2xl mx-auto"
-            >
-              Interactive visualizers, real-world projects, and a community of dedicated learners. Stop watching tutorials and start building.
-            </motion.p>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4"
-            >
-              <Link href="/signup">
-                <button className="w-full sm:w-auto px-8 py-4 bg-primary text-black font-bold rounded-xl hover:bg-yellow-400 transition-colors shadow-[0_0_30px_rgba(247,223,30,0.3)]">
-                  Start Learning for Free
-                </button>
-              </Link>
-              <Link href="#explore">
-                <button className="w-full sm:w-auto px-8 py-4 glass text-white font-bold rounded-xl hover:bg-white/10 transition-colors border border-white/10">
-                  Explore Catalog
-                </button>
-              </Link>
-            </motion.div>
-          </div>
+    <div className="min-h-screen font-sans" ref={containerRef}>
+      {/* Cinematic Hero Section */}
+      <section className="relative min-h-[90vh] flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="max-w-5xl mx-auto relative z-10 w-full flex flex-col items-center text-center">
           
-          {/* Stats Bar */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 mb-10 shadow-[0_0_20px_rgba(247,223,30,0.15)]"
+          >
+            <Sparkles className="w-5 h-5 text-primary animate-pulse" />
+            <span className="text-sm font-bold tracking-widest uppercase bg-gradient-to-r from-primary to-orange-400 bg-clip-text text-transparent">
+              Enter The Javascript Universe
+            </span>
+          </motion.div>
+
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            className="text-6xl md:text-8xl lg:text-9xl font-black mb-8 tracking-tighter leading-[0.9]"
+          >
+            CODE YOUR <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+              DESTINY
+            </span>
+          </motion.h1>
+
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            className="text-xl md:text-2xl text-zinc-400 mb-12 max-w-3xl mx-auto font-light leading-relaxed"
+          >
+            Embark on an interactive journey across floating islands of knowledge. Master algorithms, visualize the stack, and build your legacy.
+          </motion.p>
+
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 p-6 glass-card border border-white/10 rounded-3xl"
+            transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+          >
+            <Link href="#explore">
+              <button className="group relative px-10 py-5 bg-primary text-black font-extrabold text-lg rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(247,223,30,0.4)] hover:shadow-[0_0_60px_rgba(247,223,30,0.6)] transition-all hover:scale-105 active:scale-95">
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                <span className="relative flex items-center gap-3">
+                  Embark on Journey <ChevronRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                </span>
+              </button>
+            </Link>
+          </motion.div>
+
+          {/* Floating Stats Bar */}
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
+            className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 p-8 glass-card border border-white/10 rounded-[2rem] w-full max-w-4xl"
           >
             {[
-              { label: "Active Learners", value: "50,000+", icon: Users },
-              { label: "Premium Courses", value: "24", icon: BookOpen },
-              { label: "Hours of Content", value: "1,200+", icon: Clock },
-              { label: "Success Rate", value: "98%", icon: BarChart },
+              { label: "Active Explorers", value: 50420, prefix: "", suffix: "+", icon: Users },
+              { label: "Realms Conquered", value: 24, prefix: "", suffix: "", icon: BookOpen },
+              { label: "Hours of Lore", value: 1200, prefix: "", suffix: "+", icon: Clock },
+              { label: "Ascension Rate", value: 98, prefix: "", suffix: "%", icon: BarChart },
             ].map((stat, i) => (
-              <div key={i} className="text-center p-4 border-r border-white/5 last:border-0">
-                <stat.icon className="w-6 h-6 text-primary mx-auto mb-3" />
-                <div className="text-2xl font-bold mb-1">{stat.value}</div>
-                <div className="text-xs text-zinc-400 uppercase tracking-wider">{stat.label}</div>
+              <div key={i} className="text-center group">
+                <stat.icon className="w-8 h-8 text-zinc-500 group-hover:text-primary transition-colors mx-auto mb-4" />
+                <div className="text-4xl font-black mb-2 tracking-tighter">
+                  <AnimatedCounter value={stat.value} prefix={stat.prefix} suffix={stat.suffix} />
+                </div>
+                <div className="text-sm font-bold text-zinc-500 uppercase tracking-widest">{stat.label}</div>
               </div>
             ))}
           </motion.div>
+
         </div>
       </section>
 
-      {/* Course Marketplace Section */}
-      <section id="explore" className="py-20 px-4 sm:px-6 lg:px-8 bg-black/40 border-t border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Explore Our Catalog</h2>
-              <p className="text-zinc-400">Find the perfect course to level up your career.</p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative">
-                <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
-                <input 
-                  type="text" 
-                  placeholder="Search courses..." 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-3 bg-black/50 border border-white/10 rounded-xl focus:outline-none focus:border-primary text-white w-full sm:w-64"
-                />
-              </div>
-              <select 
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-3 bg-black/50 border border-white/10 rounded-xl focus:outline-none focus:border-primary text-white cursor-pointer"
-              >
-                {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-              </select>
-            </div>
+      {/* Map-Based Course Catalog */}
+      <section id="explore" className="relative py-40 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto relative">
+          
+          <div className="text-center mb-32 relative z-20">
+            <h2 className="text-5xl md:text-7xl font-black mb-6">The Realms of Code</h2>
+            <p className="text-xl text-zinc-400 max-w-2xl mx-auto">Choose your path carefully. Each waypoint unlocks new powers and abilities in your developer arsenal.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredCourses.map((course, idx) => (
-              <motion.div
-                key={course.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="glass-card rounded-3xl overflow-hidden border border-white/10 group flex flex-col"
-              >
-                <div className="relative h-48 overflow-hidden">
-                  <img 
-                    src={course.thumbnail} 
-                    alt={course.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 left-4 flex gap-2">
-                    <span className="px-3 py-1 bg-black/60 backdrop-blur-md rounded-lg text-xs font-bold border border-white/10 text-white uppercase tracking-wider">
-                      {course.category}
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="p-6 flex-1 flex flex-col">
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">{course.title}</h3>
-                  <p className="text-zinc-400 text-sm mb-6 line-clamp-2">{course.description}</p>
-                  
-                  <div className="flex flex-wrap gap-4 text-xs font-bold text-zinc-500 mb-6">
-                    <span className="flex items-center gap-1"><BookOpen className="w-4 h-4" /> {course.modules.length} Modules</span>
-                    <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {course.duration}</span>
-                    <span className={`flex items-center gap-1 ${
-                      course.difficulty === 'Beginner' ? 'text-green-400' :
-                      course.difficulty === 'Intermediate' ? 'text-yellow-400' : 'text-red-400'
-                    }`}>
-                      <BarChart className="w-4 h-4" /> {course.difficulty}
-                    </span>
-                  </div>
+          {/* Map Container */}
+          <div className="relative min-h-[1200px] md:min-h-[1000px] w-full">
+            
+            {/* SVG Connecting Path */}
+            <div className="absolute inset-0 z-0 hidden md:block">
+              <svg width="100%" height="100%" className="overflow-visible" preserveAspectRatio="none">
+                <motion.path
+                  d="M 200 100 C 400 100, 600 300, 800 300 S 200 600, 400 800 S 800 900, 600 1000"
+                  fill="transparent"
+                  strokeWidth="4"
+                  stroke="rgba(255,255,255,0.05)"
+                  strokeDasharray="10 10"
+                />
+                <motion.path
+                  d="M 200 100 C 400 100, 600 300, 800 300 S 200 600, 400 800 S 800 900, 600 1000"
+                  fill="transparent"
+                  strokeWidth="4"
+                  stroke="rgba(247,223,30,0.5)"
+                  strokeDasharray="10 10"
+                  style={{ pathLength }}
+                />
+              </svg>
+            </div>
 
-                  <div className="mt-auto pt-6 border-t border-white/10 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 flex items-center justify-center text-xs font-bold text-white">
-                        {course.instructor.charAt(0)}
+            {/* Course Nodes */}
+            {coursesDb.map((course, idx) => {
+              const Icon = categoryIcons[course.category] || Code2;
+              const gradient = categoryGradients[course.category] || categoryGradients["Frontend"];
+              
+              // Map-like layout positioning
+              const positions = [
+                "md:top-[50px] md:left-[10%]",
+                "md:top-[250px] md:right-[10%]",
+                "md:top-[600px] md:left-[20%]",
+                "md:top-[850px] md:right-[20%]"
+              ];
+
+              return (
+                <motion.div
+                  key={course.id}
+                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  className={`relative md:absolute w-full md:w-[400px] mb-12 md:mb-0 z-10 group ${positions[idx % positions.length]}`}
+                >
+                  <Link href={`/course/${course.id}`}>
+                    <div className="glass-card rounded-[2rem] p-2 border border-white/10 hover:border-white/30 transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
+                      {/* Node Artwork */}
+                      <div className={`h-48 rounded-[1.5rem] bg-gradient-to-br ${gradient} p-1 overflow-hidden relative`}>
+                        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <motion.div 
+                            whileHover={{ scale: 1.1, rotate: 5 }}
+                            className="w-24 h-24 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-2xl"
+                          >
+                            <Icon className="w-12 h-12 text-white" />
+                          </motion.div>
+                        </div>
+                        {/* Status Badge */}
+                        <div className="absolute top-4 left-4">
+                          <span className="px-3 py-1.5 bg-black/60 backdrop-blur-md rounded-xl text-xs font-black text-white uppercase tracking-wider border border-white/10">
+                            {course.category}
+                          </span>
+                        </div>
+                        <div className="absolute top-4 right-4">
+                          <span className="px-3 py-1.5 bg-black/60 backdrop-blur-md rounded-xl text-xs font-black text-white uppercase tracking-wider border border-white/10 flex items-center gap-1">
+                            <Clock className="w-3 h-3" /> {course.duration}
+                          </span>
+                        </div>
                       </div>
-                      <span className="text-sm font-medium text-zinc-300">{course.instructor}</span>
-                    </div>
-                    <Link href={`/course/${course.id}`}>
-                      <button className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-sm font-bold transition-colors border border-white/10">
-                        View Details
-                      </button>
-                    </Link>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
 
-            {filteredCourses.length === 0 && (
-              <div className="col-span-full py-20 text-center text-zinc-500">
-                <Search className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                <p className="text-lg">No courses found matching your criteria.</p>
-              </div>
-            )}
+                      {/* Content */}
+                      <div className="p-6">
+                        <h3 className="text-2xl font-black mb-3 leading-tight">{course.title}</h3>
+                        <p className="text-zinc-400 text-sm mb-6 line-clamp-2 leading-relaxed">{course.description}</p>
+                        
+                        <div className="flex items-center justify-between border-t border-white/10 pt-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-zinc-800 to-zinc-700 flex items-center justify-center border border-white/5">
+                              <span className="text-xs font-black text-white">{course.instructor.charAt(0)}</span>
+                            </div>
+                            <div>
+                              <p className="text-xs text-zinc-500 font-bold uppercase tracking-wider">Guide</p>
+                              <p className="text-sm font-bold text-white">{course.instructor}</p>
+                            </div>
+                          </div>
+                          <div className={`text-xs font-black uppercase tracking-wider px-3 py-1.5 rounded-lg border ${
+                            course.difficulty === 'Beginner' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
+                            course.difficulty === 'Intermediate' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' : 
+                            'bg-red-500/10 text-red-400 border-red-500/20'
+                          }`}>
+                            {course.difficulty}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>

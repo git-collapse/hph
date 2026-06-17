@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 import { UserProvider } from "@/context/UserContext";
 import { CourseProvider } from "@/context/CourseContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navbar } from "@/components/layout/Navbar";
+import { CustomCursor } from "@/components/ui/CustomCursor";
+import { AuroraBackground } from "@/components/ui/AuroraBackground";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,6 +15,11 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
 });
 
@@ -29,18 +36,20 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300">
+      <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300 font-sans">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <AuroraBackground />
+          <CustomCursor />
           <CourseProvider>
-          <UserProvider>
-            <Navbar />
-            <main className="flex-1 pt-16">
-              {children}
-            </main>
-          </UserProvider>
-        </CourseProvider>
+            <UserProvider>
+              <Navbar />
+              <main className="flex-1 pt-16 relative z-10">
+                {children}
+              </main>
+            </UserProvider>
+          </CourseProvider>
         </ThemeProvider>
       </body>
     </html>
